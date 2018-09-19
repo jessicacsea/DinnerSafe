@@ -215,25 +215,11 @@ class App extends Component {
     );
   };
 
-  // Function with props for the single event page
-  // singleEvent = () => {
-  //   return (
-  //     <EventPage
-  //       userProfile={this.state.userProfile}
-  //       selectedEvent={this.state.userProfile.parties[this.state.selectedEventIndex]}
-  //       handleBackToOverview={this.handleBackToOverview}
-  //       selectFriend={this.selectFriend}
-  //       handleLogout={this.handleLogout}
-  //       toggleRecipe={this.toggleRecipe}
-  //       savedRecipes={this.state.savedRecipes}
-  //     />
-  //   );
-  // };
-
   // Handler for going back to the main page from the single event page
   handleBackToOverview = e => {
     this.setState({
-      selectedEventIndex: null
+      selectedEventIndex: null,
+      savedRecipes: []
     });
   };
 
@@ -271,7 +257,7 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
+      <Router basename="/dinnersafe">
         <div className="App">
           {/* Current router setup is possibly just a placeholder.
           /// Making sure it's not visible when hitting other pages of the site.
@@ -293,7 +279,7 @@ class App extends Component {
                           value="sign-in"
                           onClick={this.handleClickLogin}
                         >
-                          Sign In / Create Account <i class="fab fa-google" />
+                          Sign In / Create Account <i className="fab fa-google" />
                         </button>
                         <button className="log-in-page-button guest" onClick={this.handleClickLogin} value="guest">
                           Continue as Guest
@@ -303,6 +289,20 @@ class App extends Component {
                         </button>
                       </div>
                     </form>
+                    <h6 className="credits">
+                      Built by:{" "}
+                      <a target="_blank" rel="noopener noreferrer" href="http://jessicasea.com/">
+                        Jessica Sea
+                      </a>
+                      ,{" "}
+                      <a target="_blank" rel="noopener noreferrer" href="http://dtkahn.com/">
+                        Daniel Kahn
+                      </a>
+                      ,{" "}
+                      <a target="_blank" rel="noopener noreferrer" href="http://khoipham.net">
+                        Khoi Pham
+                      </a>
+                    </h6>
                   </div>
                   {this.state.loading === true || this.state.redirected === true ? <Loader /> : null}
                   {/* <Loader /> */}

@@ -6,8 +6,8 @@ import firebase from "../../firebase";
 import _ from "lodash";
 import Header from "../Header";
 import swal from "sweetalert2";
-import DisplaySavedRecipes from "../DisplayMatchingRecipes/DisplaySavedRecipes";
 import Loader from "../Loader";
+import scrollToElement from "scroll-to-element";
 
 class EventPage extends Component {
   constructor(props) {
@@ -15,8 +15,11 @@ class EventPage extends Component {
     this.state = {
       inputValue: "",
       confirmedNewName: "",
-      APICallDone: false
+      APICallDone: false,
+      menuOpen: false
     };
+
+    // initialize firebase ref only if userProfile is passed down
     if (props.userProfile) {
       this.dbRef = firebase.database().ref(`${props.userProfile.id}`);
     } else {
@@ -125,6 +128,16 @@ class EventPage extends Component {
     });
   };
 
+  handleHamburgerMenu = event => {
+    console.log(event.target.hash);
+    scrollToElement(event.target.hash, { offset: -80, ease: "inSine", duration: 400 });
+    if (this.state.menuOpen === false) {
+      this.setState({ menuOpen: true });
+    } else {
+      this.setState({ menuOpen: false });
+    }
+  };
+
   render() {
     return (
       <div>
@@ -152,11 +165,17 @@ class EventPage extends Component {
                     </Link>
                   </div>
 
-                  <input type="checkbox" id="toggle" name="toggle" className="hidden-checkbox"></input>
+                  <input
+                    type="checkbox"
+                    id="toggle"
+                    name="toggle"
+                    className="hidden-checkbox"
+                    checked={this.state.menuOpen}
+                  />
 
-                  <div className="big-mac-icon clearfix">
+                  <div onClick={this.handleHamburgerMenu} className="big-mac-icon clearfix">
                     <label className="hamburger" htmlFor="toggle">
-                      <i class="fas fa-bars"></i>
+                      <i className="fas fa-bars" />
                     </label>
                   </div>
 
@@ -169,19 +188,22 @@ class EventPage extends Component {
                       </li>
 
                       <li className="ham-li">
-                        <Link className="event-main-page" onClick={this.props.handleBackToEvent} to="/home">
+                        <Link className="event-main-page" onClick={this.props.handleBackToOverview} to="/home">
                           Main Page
                         </Link>
                       </li>
-                      
+
                       <li className="ham-li">
-                        <a href="#add-guest">Manage Event Guests</a>
+                        <a onClick={this.handleHamburgerMenu} href="#add-guest">
+                          Manage Event Guests
+                        </a>
                       </li>
 
                       <li className="ham-li">
-                        <a href="#display-matching-recipes">Search & Save Recipes</a>
+                        <a onClick={this.handleHamburgerMenu} href="#display-matching-recipes">
+                          Search & Save Recipes
+                        </a>
                       </li>
-
                     </ul>
                   </div>
                 </div>
@@ -189,9 +211,8 @@ class EventPage extends Component {
             </header>
 
             <div className="wrapper body clearfix">
-
               <div className="event-main-page-div body clearfix">
-                <Link className="event-main-page" onClick={this.props.handleBackToEvent} to="/home">
+                <Link className="event-main-page" onClick={this.props.handleBackToOverview} to="/home">
                   Main Page
                 </Link>
               </div>
@@ -224,17 +245,12 @@ class EventPage extends Component {
                         ) {
                           return (
                             <li key={i} className="guest clearfix">
-                              {/* Edit the guests restrictions */}
                               <p>{friend.name}</p>
 
-                              {/* Fake button to make it clear you can click on the guest to edit them */}
                               <div className="fakeButton">
-                                {/* <h2 > */}
                                 <i id={friend.name} onClick={this.props.selectFriend} className="fas fa-user-edit" />
-                                {/* </h2> */}
                               </div>
 
-                              {/* Removes guest from the event */}
                               <button
                                 className="remove-friend-button"
                                 id={friend.name}
@@ -249,23 +265,6 @@ class EventPage extends Component {
                     : null}
                 </ul>
                 <Link to="existing-guest-list">Add Existing Guest</Link>
-
-                {/* <form onSubmit={this.handleSubmitAddFriend} action="">
-                  <label className="add-new-friend-label" htmlFor="add-new-friend">
-                    Add New Guest
-                  </label>
-                  <input
-                    id={"add-new-friend"}
-                    value={this.state.inputValue}
-                    onChange={this.handleChangeAddFriend}
-                    type="text"
-                    autoComplete="off"
-                    className="add-new-friend-input"
-                  />
-                  <button className="add-friend-button" onClick={this.handleClickAddFriend}>
-                    Add
-                  </button>
-                </form> */}
               </div>
 
               {this.checkCurrentEventForGuests() === true ? (
